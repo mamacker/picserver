@@ -1,0 +1,11 @@
+[Unit]
+Description=Server of Images 
+After=network-online.target 
+
+[Service]
+ExecStart=/usr/bin/node /home/pi/server/index.js
+StandardOutput=syslog
+
+[Install]
+WantedBy=multi-user.target
+Alias=picserver.service

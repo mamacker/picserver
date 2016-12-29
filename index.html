@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <meta http-equiv="refresh" content="300">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  </head>
+  <body style="text-align:center;background-color:black">
+    <div id="timer">
+    </div>
+    <script>
+
+      function getImage() {
+        $.get("http://192.168.1.33:8080/rand", function(res) {
+          console.log(res);
+          var imgUrl = "http://192.168.1.33:8080/images/" + res;
+
+          var body = $(document.body);
+          var img = $("<img class='slide' src='" + imgUrl +
+                      "' style='display:none;position:absolute;top:0px;max-height:" + 
+                      body.height() + ";max-width:" + body.width() + "'>");
+
+          img.one("load", () => {
+            var old = $(".slide");
+            old.fadeOut({
+                duration: 2000,
+                queue:false,
+                done: () => {
+                  old.remove();
+                }
+            });
+        
+            $(document.body).append(img.fadeIn({
+              duration: 3000,
+              queue: false
+            }).animate({
+              left: body.width(),
+            }, {
+              duration: 30000,
+              queue:false
+            }));
+          });
+        });
+      }
+
+      var timeLeft = 30;
+      // Only do this when the computer boots.
+      if (sessionStorage.firstLoad) {
+        timeLeft = 0;
+      }
+      sessionStorage.firstLoad = true;
+
+      var countDown = setInterval(() => {
+        $("#timer").css({
+          fontSize: 140,
+          fontWeight: "bold",
+          color: "white",
+        }).text(timeLeft);
+        timeLeft--;
+      }, 1000);
+
+      setTimeout(() => {
+        clearInterval(timeLeft);
+        $("#timer").remove();
+        setInterval(getImage, 15000);
+        getImage();
+      }, timeLeft * 1000);
+    </script>
+  </body>
+</html>
