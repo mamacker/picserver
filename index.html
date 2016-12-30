@@ -3,7 +3,7 @@
     <meta http-equiv="refresh" content="300">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   </head>
-  <body style="text-align:center;background-color:black">
+  <body style="text-align:center;background-color:black;overflow:hidden">
     <div id="timer">
     </div>
     <script>
@@ -23,6 +23,7 @@
             old.fadeOut({
                 duration: 2000,
                 queue:false,
+                easing: "linear",
                 done: () => {
                   old.remove();
                 }
@@ -30,11 +31,13 @@
         
             $(document.body).append(img.fadeIn({
               duration: 3000,
+              easing: "linear",
               queue: false
             }).animate({
               left: body.width(),
             }, {
               duration: 30000,
+              easing: "linear",
               queue:false
             }));
           });
