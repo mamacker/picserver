@@ -6,7 +6,26 @@
   <body style="text-align:center;background-color:black;overflow:hidden">
     <div id="timer">
     </div>
+    <div id="currentTime">
+    </div>
     <script>
+      function dateStuff() {
+        var offset= -8; //(Pacific Daylight Time)                                                                  
+        // Check for DST
+        var month = new Date().getMonth();
+        var date = new Date().getDate();
+        if (month > 2 && month < 10) {
+          offset = -7;
+        }
+        else if (month == 2 && date >= 10) {
+          offset = -7;
+        }
+        else if (month == 10 && date >= 4) {
+          offset = -7;
+        }
+        var d = new Date( new Date().getTime() + offset * 3600 * 1000);
+        return d;
+      }
 
       function getImage() {
         $.get("http://192.168.1.33:8080/rand", function(res) {
@@ -66,6 +85,20 @@
         setInterval(getImage, 15000);
         getImage();
       }, timeLeft * 1000);
+
+      setInterval(() => {
+        var now = dateStuff();
+        $("#currentTime").css({
+          position:"absolute",
+          bottom: 40,
+          right: 40,
+          fontSize: 100,
+          fontWeight: "bold",
+          color: "white",
+          zIndex: 1000
+        }).text(now.getHours() + ":" + now.getMinutes() + " " + now.getDate() + "/" + (now.getMonth()+1));
+      }, 1000);
+
     </script>
   </body>
 </html>
