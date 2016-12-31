@@ -1,6 +1,8 @@
 var spawn = require('child_process').spawn;
 var readline = require('readline');
 var express = require('express');
+var ExifImage = require('exif').ExifImage;
+
 
 var lastLoad = new Date().getTime();
 var fileListing = [];
@@ -54,6 +56,19 @@ app.get('/rand', (req, res) => {
     console.log("Exception trying to fetch file: ", ex, index);
   }
 })
+
+app.get('/exif', (req, res) => {
+  var file = req.query.file;
+  new ExifImage({ image : "home/pi/pictures/" + file }, function (error, exifData) {
+    if (error) {
+      console.log('Error: '+error.message);
+      res.end("" + 1);
+    } else {
+      console.log(exifData.image.Orientation); // Do something with your data!
+      res.end("" + exifData.image.Orientation);
+    }
+  });
+});
 
 app.get('/alive', (req, res) => {
   res.end("" + ((new Date().getTime() - lastLoad) < 65000));

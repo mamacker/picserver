@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "exif": "^0.6.0",
     "express": "^4.14.0"
   }
 }

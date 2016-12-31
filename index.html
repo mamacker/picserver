@@ -9,6 +9,15 @@
     <div id="currentTime">
     </div>
     <script>
+      function pad2(number) {
+        var numStr = number + "";
+        if (numStr.length < 2) {
+          numStr = "0" + numStr;
+        }
+
+        return numStr;
+      }   
+
       function dateStuff() {
         var offset= -8; //(Pacific Daylight Time)                                                                  
         // Check for DST
@@ -31,11 +40,37 @@
         $.get("http://192.168.1.33:8080/rand", function(res) {
           console.log(res);
           var imgUrl = "http://192.168.1.33:8080/images/" + res;
+          var imgExif = "http://192.168.1.33:8080/exif?file=" + res;
 
           var body = $(document.body);
           var img = $("<img class='slide' src='" + imgUrl +
                       "' style='display:none;position:absolute;top:0px;max-height:" + 
                       body.height() + ";max-width:" + body.width() + "'>");
+
+          $.get(imgExif, (o) => {
+            console.log("Orientation: " + o);
+            var rotation = 0;
+            switch(o) {
+              case "8":
+                rotation = -90;
+                break;
+              case "3":
+                rotation = 180;
+                break;
+              case "6":
+                rotation = 90;
+                break;
+            }
+
+            console.log("Transforming: " + rotation);
+            img.css({ WebkitTransform: 'rotate(' + rotation + 'deg)'});
+            /*
+            img.css({
+              "transform": "rotate(" + rotation + "'deg')"
+            });
+            */
+            console.log(img.attr("style"));
+          });
 
           img.one("load", () => {
             var old = $(".slide");
@@ -90,13 +125,14 @@
         var now = dateStuff();
         $("#currentTime").css({
           position:"absolute",
-          bottom: 40,
-          right: 40,
-          fontSize: 100,
+          bottom: 0,
+          right: 20,
+          fontSize: 70,
           fontWeight: "bold",
           color: "white",
+          opacity: .5,
           zIndex: 1000
-        }).text(now.getHours() + ":" + now.getMinutes() + " " + now.getDate() + "/" + (now.getMonth()+1));
+        }).text((now.getHours() % 12) + ":" + pad2(now.getMinutes()) + " " + (now.getMonth()+1) + "/" + now.getDate());
       }, 1000);
 
     </script>
