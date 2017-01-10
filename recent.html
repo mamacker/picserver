@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  </head>
+  <body style="background-color:black;margin:0px;overflow:hidden;height:100%;width:100%">
+  <a id="smspic" href="intent://sms/#Intent;scheme=sms;package=vnd.android-dir/mms-sms;S.browser_fallback_url=http%3A%2F%2F192.168.1.33:8080/shell.html;end">Try SMS start.</a>
+  <a id="smspicto" href="smsto:?body=hi mom">try smsto link.</a>
+  </iframe>
+  <canvas id='canvas'></canvas> 
+  <script>
+    $.get("http://192.168.1.33:8080/recent", (data) => {
+      var res = JSON.parse(data);
+      var imgUrl = res[0];
+      var img = $("<img>").attr("src", "http://192.168.1.33:8080/images/" + imgUrl);
+      img.on("load", () => {
+        var context = $("#canvas")[0].getContext('2d');
+        context.drawImage(img[0], 0, 0);
+        var dataUrl = $("#canvas")[0].toDataURL();
+        console.log(dataUrl);
+        $("#smspicto").attr("href","smsto:?body=" + dataUrl);
+      });
+    });
+  </script>
+  </body>
+</html>

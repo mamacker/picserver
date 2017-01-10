@@ -1,6 +1,8 @@
 var spawn = require('child_process').spawn;
 var readline = require('readline');
 var express = require('express');
+var gpio = require('rpi-gpio');
+gpio.setMode(gpio.MODE_BCM);
 var ExifImage = require('exif').ExifImage;
 
 
@@ -50,7 +52,10 @@ app.get('/rand', (req, res) => {
   lastLoad = new Date().getTime();
   var index = randomIntFromInterval(0, fileListing.length);
   try {
-    res.send(fileListing[index].replace('/home/pi/pictures/', ""));
+    var fileName = fileListing[index].replace('/home/pi/pictures/', "");
+    res.send(fileName);
+    latestRenders.unshift(fileName);
+    latestRenders.length = 100;
   } catch(ex) {
     res.end();
     console.log("Exception trying to fetch file: ", ex, index);
@@ -82,9 +87,39 @@ app.get('/shell', function (req, res) {
   res.sendFile('/home/pi/server/shell.html');
 })
 
+app.get('/r', function (req, res) {
+  res.sendFile('/home/pi/server/recent.html');
+})
+
 app.get('/recent', (req, res) => {
   var lenOfLatest = latestRenders.length;
-  res.write(JSON.stringify(latestRenders.slice(lenOfLatest - 10, lenOfLatest + 1)));
+  console.log(latestRenders);
+  res.write(JSON.stringify(latestRenders.slice(0, 10)));
+  res.end();
+});
+
+app.get('/resetnetwork', (req, res) => {
+  var netPowerSwitch = 16;
+  gpio.setup(netPowerSwitch, gpio.DIR_OUT, pinReady);
+  function pinReady() {
+    gpio.write(netPowerSwitch, true, (err) => {
+      if (err) {
+        console.log("Error in setting gpio pin.");
+        res.end("Error.");
+        return;
+      }
+      setTimeout(() => {
+        gpio.write(netPowerSwitch, false, (err) => {
+          if (err) {
+            console.log("Error in setting gpio pin.");
+            res.end("Error.");
+            return;
+          }
+          res.end("Network reset.");
+        });
+      }, 5000);
+    });
+  }
 });
 
 app.listen(8080, function () {
