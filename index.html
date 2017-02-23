@@ -11,6 +11,8 @@
     <div id="currentBTC">
     </div>
     <script>
+      const serverAddress = "http://192.168.1.33:8080";
+
       function pad2(number) {
         var numStr = number + "";
         if (numStr.length < 2) {
@@ -39,10 +41,10 @@
       }
 
       function getImage() {
-        $.get("http://192.168.1.33:8080/rand", function(res) {
+        $.get(serverAddress + "/rand", function(res) {
           console.log(res);
-          var imgUrl = "http://192.168.1.33:8080/images/" + res;
-          var imgExif = "http://192.168.1.33:8080/exif?file=" + res;
+          var imgUrl = serverAddress + "/images/" + res;
+          var imgExif = serverAddress + "/exif?file=" + res;
 
           var body = $(document.body);
           var img = $("<img class='slide' src='" + imgUrl +
