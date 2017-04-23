@@ -21,7 +21,19 @@ var args = [
   "'*.jpg'",
   "-o",
   "-name",
-  "'*.JPG'"
+  "'*.JPG'",
+  "-o",
+  "-name",
+  "'*.gif'",
+  "-o",
+  "-name",
+  "'*.GIF'",
+  "-o",
+  "-name",
+  "'*.png'",
+  "-o",
+  "-name",
+  "'*.PNG'"
 ];
 
 // Give the pi some time to boot.
