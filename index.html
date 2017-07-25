@@ -2,7 +2,6 @@
   <head>
     <meta http-equiv="refresh" content="300">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="//pshd.it/button.js"></script>
   </head>
   <body style="text-align:center;background-color:black;overflow:hidden">
     <div id="timer">
@@ -25,21 +24,6 @@
         textDecoration: "blink",
         color: "white",
         zIndex: 10000
-      });
-
-      var button = pshdit.button('mattshome');
-      button.on("pushed", function() { 
-        var status = document.getElementById("dadstatus");
-        status.innerHTML = 'Dad\'s Home!!!';
-        
-        var fade = setInterval(() => {
-          $("#dadstatus").fadeToggle(1000);
-        }, 1000);
-
-        setTimeout(function() {
-          status.innerHTML = "";
-          clearInterval(fade);
-        }, 30000);
       });
 
       function pad2(number) {
