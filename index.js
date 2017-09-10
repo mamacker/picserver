@@ -120,9 +120,11 @@ app.get('/recent', (req, res) => {
   res.end();
 });
 
+pauseTimeout = 0;
 app.get('/pause', (req, res) => {
   paused = true;
-  setTimeout(() => {
+  clearTimeout(pauseTimeout);
+  pauseTimeout = setTimeout(() => {
     paused = false;
   }, 30000);
 });
