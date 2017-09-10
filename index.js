@@ -7,8 +7,11 @@ var ExifImage = require('exif').ExifImage;
 
 
 var lastLoad = new Date().getTime();
+var index = 0;
+var paused = false;
 var fileListing = [];
 var latestRenders = [];
+var indexes = [];
 
 function randomIntFromInterval(min,max) {
   return Math.floor(Math.random()*(max-min+1)+min);
@@ -60,9 +63,16 @@ var app = express()
 
 app.use('/images', express.static('/home/pi/pictures'));
 
+setInterval(() => {
+  if (!paused) {
+    index = randomIntFromInterval(0, fileListing.length);
+    indexes.unshift(index);
+    indexes.length = 100;
+  }
+}, 30000);
+
 app.get('/rand', (req, res) => {
   lastLoad = new Date().getTime();
-  var index = randomIntFromInterval(0, fileListing.length);
   try {
     var fileName = fileListing[index].replace('/home/pi/pictures/', "");
     res.send(fileName);
@@ -108,6 +118,17 @@ app.get('/recent', (req, res) => {
   console.log(latestRenders);
   res.write(JSON.stringify(latestRenders.slice(0, 10)));
   res.end();
+});
+
+app.get('/pause', (req, res) => {
+  paused = true;
+  setTimeout(() => {
+    paused = false;
+  }, 30000);
+});
+
+app.get('/back', (req, res) => {
+  index = indexes[indexes.length() - 2]
 });
 
 app.get('/resetnetwork', (req, res) => {
