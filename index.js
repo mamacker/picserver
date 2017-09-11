@@ -68,13 +68,15 @@ setInterval(() => {
     index = randomIntFromInterval(0, fileListing.length);
     indexes.unshift(index);
     indexes.length = 100;
+    console.log("New Index:", index);
   }
 }, 30000);
 
 app.get('/rand', (req, res) => {
   lastLoad = new Date().getTime();
   try {
-    var fileName = fileListing[index].replace('/home/pi/pictures/', "");
+    var fileName = fileListing[index];
+    if (fileName) fileName = fileName.replace('/home/pi/pictures/', "");
     res.send(fileName);
     latestRenders.unshift(fileName);
     latestRenders.length = 100;
@@ -122,6 +124,7 @@ app.get('/recent', (req, res) => {
 
 pauseTimeout = 0;
 app.get('/pause', (req, res) => {
+  console.log("Paused!!");
   paused = true;
   clearTimeout(pauseTimeout);
   pauseTimeout = setTimeout(() => {
@@ -130,7 +133,9 @@ app.get('/pause', (req, res) => {
 });
 
 app.get('/back', (req, res) => {
-  index = indexes[indexes.length() - 2]
+  if (indexes.length > 2) 
+    index = indexes[indexes.length - 2]
+  console.log("Back! New index: ", index, indexes.length);
 });
 
 app.get('/resetnetwork', (req, res) => {
