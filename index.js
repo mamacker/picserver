@@ -70,7 +70,7 @@ setInterval(() => {
     indexes.length = 100;
     console.log("New Index:", index);
   }
-}, 30000);
+}, 20000);
 
 app.get('/rand', (req, res) => {
   lastLoad = new Date().getTime();
