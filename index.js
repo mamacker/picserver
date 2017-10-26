@@ -66,11 +66,15 @@ app.use('/images', express.static('/home/pi/pictures'));
 setInterval(() => {
   if (!paused) {
     index = randomIntFromInterval(0, fileListing.length);
+
+    var fileName = fileListing[index];
+    // If its a kaylie picture... try again.
+    if (fileName && fileName.match(/.*kaylie.*/i)) index = randomIntFromInterval(0, fileListing.length);
     indexes.unshift(index);
     indexes.length = 100;
     console.log("New Index:", index);
   }
-}, 20000);
+}, 10000);
 
 app.get('/rand', (req, res) => {
   lastLoad = new Date().getTime();
