@@ -46,8 +46,8 @@
         else if (month == 2 && date >= 10) {
           offset = -7;
         }
-        else if (month == 10 && date >= 4) {
-          offset = -7;
+        else if (month == 10 && date > 4) {
+          offset = -8;
         }
         var d = new Date( new Date().getTime() + offset * 3600 * 1000);
         return d;
