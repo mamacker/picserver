@@ -147,26 +147,10 @@
           fontSize: 70,
           fontWeight: "bold",
           color: "white",
-          opacity: .5,
+          mixBlendMode: "difference",
           zIndex: 1000
         }).text(((now.getHours()) % 12) + ":" + pad2(now.getMinutes()) + " " + (now.getMonth()+1) + "/" + now.getDate());
       }, 1000);
-
-      setInterval(() => {
-        $.get("https://theamackers.com/btc/account?op=price", (res) => {
-          $("#currentBTC").css({
-            position:"absolute",
-            bottom: 0,
-            left: 20,
-            fontSize: 70,
-            fontWeight: "bold",
-            color: "white",
-            opacity: .5,
-            zIndex: 1000
-          }).text(res);
-        });
-      }, 10000);
-
     </script>
   </body>
 </html>
