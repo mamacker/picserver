@@ -92,7 +92,7 @@ app.get('/rand', (req, res) => {
 
 app.get('/exif', (req, res) => {
   var file = req.query.file;
-  new ExifImage({ image : "home/pi/pictures/" + file }, function (error, exifData) {
+  new ExifImage({ image : "/home/pi/pictures/" + file }, function (error, exifData) {
     if (error) {
       console.log('Error: '+error.message);
       res.end("" + 1);
