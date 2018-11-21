@@ -64,23 +64,32 @@
                       "' style='display:none;position:absolute;top:0px;max-height:" + 
                       body.height() + ";max-width:" + body.width() + "'>");
 
+          var dateStr = "";
+          var dateSlide = $("<div class='slide' " +
+                  "' style='font-size:30px;padding-top:10px;padding-left:20px;color:white;mix-blend-mode:difference;display:none;position:absolute;top:0px;z-index:10'></div>");
+
           $.get(imgExif, (o) => {
-            console.log("Orientation: " + o);
+            o = JSON.parse(o);
+            console.log("Orientation: ", o);
             var rotation = 0;
-            switch(o) {
-              case "8":
+            switch(o.orientation) {
+              case 8:
                 rotation = -90;
                 break;
-              case "3":
+              case 3:
                 rotation = 180;
                 break;
-              case "6":
+              case 6:
                 rotation = 90;
                 break;
             }
 
             console.log("Transforming: " + rotation);
             img.css({ WebkitTransform: 'rotate(' + rotation + 'deg)'});
+            if (o.date) {
+              dateStr = o.date[0].split(/:/);
+              dateSlide.text(`${dateStr[1]}/${dateStr[2]}/${dateStr[0]}`);
+            }
             /*
             img.css({
               "transform": "rotate(" + rotation + "'deg')"
@@ -99,7 +108,7 @@
                   old.remove();
                 }
             });
-        
+            
             $(document.body).append(img.fadeIn({
               duration: 3000,
               easing: "linear",
@@ -111,6 +120,21 @@
               easing: "linear",
               queue:false
             }));
+
+            if (dateStr && dateStr != "") {
+              console.log("Date string found: ", dateStr);
+              $(document.body).append(dateSlide.fadeIn({
+                duration: 3000,
+                easing: "linear",
+                queue: false
+              }).animate({
+                left: body.width(),
+              }, {
+                duration: 30000,
+                easing: "linear",
+                queue:false
+              }));
+            }
           });
         });
       }

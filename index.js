@@ -96,7 +96,9 @@ app.get('/exif', (req, res) => {
       res.end("" + 1);
     } else {
       console.log(exifData.image.Orientation); // Do something with your data!
-      res.end("" + exifData.image.Orientation);
+      let dateObj = exifData.exif.DateTimeOriginal;
+      if (dateObj && dateObj != "") { dateObj = dateObj.split(/ /); };
+      res.end(JSON.stringify({orientation: exifData.image.Orientation, date: dateObj}));
     }
   });
 });
