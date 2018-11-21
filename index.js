@@ -1,8 +1,6 @@
 var spawn = require('child_process').spawn;
 var readline = require('readline');
 var express = require('express');
-var gpio = require('rpi-gpio');
-gpio.setMode(gpio.MODE_BCM);
 var ExifImage = require('exif').ExifImage;
 
 
@@ -140,30 +138,6 @@ app.get('/back', (req, res) => {
   if (indexes.length > 2) 
     index = indexes[indexes.length - 2]
   console.log("Back! New index: ", index, indexes.length);
-});
-
-app.get('/resetnetwork', (req, res) => {
-  var netPowerSwitch = 16;
-  gpio.setup(netPowerSwitch, gpio.DIR_OUT, pinReady);
-  function pinReady() {
-    gpio.write(netPowerSwitch, true, (err) => {
-      if (err) {
-        console.log("Error in setting gpio pin.");
-        res.end("Error.");
-        return;
-      }
-      setTimeout(() => {
-        gpio.write(netPowerSwitch, false, (err) => {
-          if (err) {
-            console.log("Error in setting gpio pin.");
-            res.end("Error.");
-            return;
-          }
-          res.end("Network reset.");
-        });
-      }, 5000);
-    });
-  }
 });
 
 app.listen(8080, function () {
