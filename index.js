@@ -16,7 +16,7 @@ function randomIntFromInterval(min,max) {
 }
 
 var args = [
-  "/home/pi/pictures/",
+  "/home/pi/",
   //"/home/pi/test/",
   "-name",
   "'*.jpg'",
@@ -59,7 +59,7 @@ setTimeout(() => {
 
 var app = express()
 
-app.use('/images', express.static('/home/pi/pictures'));
+app.use('/images', express.static('/home/pi'));
 
 setInterval(() => {
   if (!paused) {
@@ -78,7 +78,7 @@ app.get('/rand', (req, res) => {
   lastLoad = new Date().getTime();
   try {
     var fileName = fileListing[index];
-    if (fileName) fileName = fileName.replace('/home/pi/pictures/', "");
+    if (fileName) fileName = fileName.replace('/home/pi/', "");
     res.send(fileName);
     latestRenders.unshift(fileName);
     latestRenders.length = 100;
@@ -90,7 +90,7 @@ app.get('/rand', (req, res) => {
 
 app.get('/exif', (req, res) => {
   var file = req.query.file;
-  new ExifImage({ image : "/home/pi/pictures/" + file }, function (error, exifData) {
+  new ExifImage({ image : "/home/pi/" + file }, function (error, exifData) {
     if (error) {
       console.log('Error: '+error.message);
       res.end("" + 1);
