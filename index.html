@@ -65,8 +65,9 @@
                       body.height() + ";max-width:" + body.width() + "'>");
 
           var dateStr = "";
+          var randomPad = Math.floor(Math.random() * 50);
           var dateSlide = $("<div class='slide' " +
-                  "' style='font-size:30px;padding-top:10px;padding-left:20px;color:white;mix-blend-mode:difference;display:none;position:absolute;top:0px;z-index:10'></div>");
+                  "' style='font-size:30px;font-weight:bold;padding-top:" +randomPad + "px;padding-left:20px;color:white;mix-blend-mode:difference;display:none;position:absolute;top:0px;z-index:10'></div>");
 
           $.get(imgExif, (o) => {
             o = JSON.parse(o);
@@ -130,7 +131,7 @@
               }).animate({
                 left: body.width(),
               }, {
-                duration: 30000,
+                duration: 20000,
                 easing: "linear",
                 queue:false
               }));
