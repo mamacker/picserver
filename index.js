@@ -122,7 +122,7 @@ app.get('/r', function (req, res) {
 app.get('/recent', (req, res) => {
   var lenOfLatest = latestRenders.length;
   console.log(latestRenders);
-  res.write(JSON.stringify(latestRenders.slice(0, 10)));
+  res.write(JSON.stringify(latestRenders.slice(0, 20)));
   res.end();
 });
 
