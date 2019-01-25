@@ -56,13 +56,19 @@
       function getImage() {
         $.get(serverAddress + "/rand", function(res) {
           console.log(res);
+          var body = $(document.body);
           var imgUrl = serverAddress + "/images/" + res;
           var imgExif = serverAddress + "/exif?file=" + res;
-
-          var body = $(document.body);
-          var img = $("<img class='slide' src='" + imgUrl +
-                      "' style='display:none;position:absolute;top:0px;min-height:500px;max-height:" + 
-                      body.height() + ";max-width:" + body.width() + "'>");
+          let img;
+          if (res.match(/.*\.mp4/)) {
+            img = $("<video autoplay loop class='slide' src='" + imgUrl +
+                        "' style='display:none;position:absolute;top:0px;min-height:500px;max-height:" + 
+                        body.height() + ";max-width:" + body.width() + "'>");
+          } else {
+            img = $("<img class='slide' src='" + imgUrl +
+                        "' style='display:none;position:absolute;top:0px;min-height:500px;max-height:" + 
+                        body.height() + ";max-width:" + body.width() + "'>");
+          }
 
           var dateStr = "";
           var randomPad = Math.floor(Math.random() * 50);

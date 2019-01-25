@@ -2,7 +2,8 @@ var spawn = require('child_process').spawn;
 var readline = require('readline');
 var express = require('express');
 var ExifImage = require('exif').ExifImage;
-
+var fs = require('fs');
+var exiftool = require('exiftool');
 
 var lastLoad = new Date().getTime();
 var index = 0;
@@ -32,6 +33,12 @@ var args = [
   "-o",
   "-name",
   "'*.png'",
+  "-o",
+  "-name",
+  "'*.mp4'",
+  "-o",
+  "-name",
+  "'*.MP4'",
   "-o",
   "-name",
   "'*.PNG'"
@@ -90,17 +97,39 @@ app.get('/rand', (req, res) => {
 
 app.get('/exif', (req, res) => {
   var file = req.query.file;
-  new ExifImage({ image : "/home/pi/" + file }, function (error, exifData) {
-    if (error) {
-      console.log('Error: '+error.message);
-      res.end("" + 1);
-    } else {
-      console.log(exifData.image.Orientation); // Do something with your data!
-      let dateObj = exifData.exif.DateTimeOriginal;
-      if (dateObj && dateObj != "") { dateObj = dateObj.split(/ /); };
-      res.end(JSON.stringify({orientation: exifData.image.Orientation, date: dateObj}));
-    }
-  });
+  if (file.match(/.*.(mp4|mov)/i)) {
+    fs.readFile("/home/pi/" + file, function (err, data) {
+      if (err) {
+        console.log('Error: ', err);
+        res.end("" + 1);
+      }
+
+      exiftool.metadata(data, function (err, metadata) {
+        if (err) {
+          console.log('Error in movie: ',err);
+	  console.log("Has exif tool been installed: sudo apt-get install exiftool");
+          res.end("" + 1);
+          return;
+        }
+        console.log("Exif movie: ", metadata);
+        let dateObj = metadata.mediaCreateDate;
+        if (dateObj && dateObj != "") { dateObj = dateObj.split(/ /); };
+        res.end(JSON.stringify({orientation: 1, date: dateObj}));
+      });
+    });
+  } else {
+    new ExifImage({ image : "/home/pi/" + file }, function (error, exifData) {
+      if (error) {
+        console.log('Error: '+error.message);
+        res.end("" + 1);
+      } else {
+        console.log(exifData.image.Orientation); // Do something with your data!
+        let dateObj = exifData.exif.DateTimeOriginal;
+        if (dateObj && dateObj != "") { dateObj = dateObj.split(/ /); };
+        res.end(JSON.stringify({orientation: exifData.image.Orientation, date: dateObj}));
+      }
+    });
+  }
 });
 
 app.get('/alive', (req, res) => {
