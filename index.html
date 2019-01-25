@@ -60,7 +60,7 @@
           var imgUrl = serverAddress + "/images/" + res;
           var imgExif = serverAddress + "/exif?file=" + res;
           let img;
-          if (res.match(/.*\.mp4/)) {
+          if (res.match(/.*\.(mp4|mov)/i)) {
             img = $("<video autoplay loop class='slide' src='" + imgUrl +
                         "' style='display:none;position:absolute;top:0px;min-height:500px;max-height:" + 
                         body.height() + ";max-width:" + body.width() + "'>");
