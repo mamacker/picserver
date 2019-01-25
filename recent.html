@@ -12,7 +12,12 @@
       console.log(res);
       for (var i = 0; i < res.length; i++) {
         var imgUrl = res[i];
-        var img = $("<img height='400px' style='clear:left;float:left'>").attr("src", "http://192.168.1.33:8080/images/" + imgUrl);
+        var img;
+        if (res[i].match(/.*\.(mp4|mov)/i)) {
+          img = $("<video autoplay loop height='400px' style='clear:left;float:left'>").attr("src", "http://192.168.1.33:8080/images/" + imgUrl);
+        } else {
+          img = $("<img height='400px' style='clear:left;float:left'>").attr("src", "http://192.168.1.33:8080/images/" + imgUrl);
+        }
         $(document.body).append(img);
       }
     });
