@@ -113,11 +113,10 @@ app.get('/exif', (req, res) => {
       exiftool.metadata(data, function (err, metadata) {
         if (err) {
           console.log('Error in movie: ',err);
-	  console.log("Has exif tool been installed: sudo apt-get install exiftool");
+	  console.log("Has exif tool been installed?: sudo apt-get install exiftool");
           res.end("" + 1);
           return;
         }
-        console.log("Exif movie: ", metadata);
         let dateObj = metadata.mediaCreateDate;
         if (dateObj && dateObj != "") { dateObj = dateObj.split(/ /); };
         res.end(JSON.stringify({orientation: 1, date: dateObj}));
@@ -154,10 +153,13 @@ app.get('/r', function (req, res) {
   res.sendFile('/home/pi/server/recent.html');
 })
 
+function uniq(a) {
+  return Array.from(new Set(a));
+}
+
 app.get('/recent', (req, res) => {
-  var lenOfLatest = latestRenders.length;
   console.log(latestRenders);
-  res.write(JSON.stringify(latestRenders.slice(0, 20)));
+  res.write(JSON.stringify(uniq(latestRenders).slice(0, 20)));
   res.end();
 });
 
