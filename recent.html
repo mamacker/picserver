@@ -7,18 +7,49 @@
   <!--<a id="smspicto" href="smsto:?body=hi mom">try smsto link.</a>-->
   <br>
   <script>
+    const serverAddress = "http://192.168.1.33:8080";
     $.get("/recent", (data) => {
       var res = JSON.parse(data);
       console.log(res);
       for (var i = 0; i < res.length; i++) {
-        var imgUrl = res[i];
-        var img;
+        let imgUrl = res[i];
+        let imgExif = serverAddress + "/exif?file=" + res[i];
+        let img;
         if (res[i].match(/.*\.(mp4|mov)/i)) {
           img = $("<video autoplay loop height='400px' style='clear:left;float:left'>").attr("src", "http://192.168.1.33:8080/images/" + imgUrl);
         } else {
           img = $("<img height='400px' style='clear:left;float:left'>").attr("src", "http://192.168.1.33:8080/images/" + imgUrl);
         }
+        let dateSlide = $("<div " +
+                " style='height:400px;font-size:15px;font-weight:bold;padding-left:20px;color:white;mix-blend-mode:difference;float:left'></div>");
+
         $(document.body).append(img);
+        $(document.body).append(dateSlide);
+        $.get(imgExif, (o) => {
+          o = JSON.parse(o);
+          console.log("Orientation: ", o);
+          var rotation = 0;
+          switch(o.orientation) {
+            case 8:
+              rotation = -90;
+              break;
+            case 3:
+              rotation = 180;
+              break;
+            case 6:
+              rotation = 90;
+              break;
+          }
+
+          console.log("Transforming: " + rotation);
+          img.css({ WebkitTransform: 'rotate(' + rotation + 'deg)'});
+          var dateStr = "";
+          if (o.date) {
+            dateStr = o.date[0].split(/:/);
+            dateSlide.text(`${dateStr[1]}/${dateStr[2]}/${dateStr[0]}`);
+          }
+          console.log(img.attr("style"));
+        });
       }
     });
   </script>
