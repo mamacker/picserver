@@ -25,6 +25,7 @@
 
         $(document.body).append(img);
         $(document.body).append(dateSlide);
+
         $.get(imgExif, (o) => {
           o = JSON.parse(o);
           console.log("Orientation: ", o);
@@ -42,7 +43,7 @@
           }
 
           console.log("Transforming: " + rotation);
-          img.css({ WebkitTransform: 'rotate(' + rotation + 'deg)'});
+          //img.css({ WebkitTransform: 'rotate(' + rotation + 'deg)'});
           var dateStr = "";
           if (o.date) {
             dateStr = o.date[0].split(/:/);
