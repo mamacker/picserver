@@ -1,9 +1,7 @@
 var spawn = require('child_process').spawn;
 var readline = require('readline');
 var express = require('express');
-var ExifImage = require('exif').ExifImage;
 var fs = require('fs');
-var exiftool = require('exiftool');
 
 var lastLoad = new Date().getTime();
 var index = 0;
@@ -101,44 +99,46 @@ app.get('/rand', (req, res) => {
   }
 })
 
+function getExif(file, cb) {
+  let args = [
+    " ",
+    "-json",
+    "\"/home/pi/" + file + "\""
+  ];
+
+  let child = spawn('exiftool', args, {'shell':true});
+  console.log("exiftool" + args.join(" "))
+
+  let rl = readline.createInterface({
+    input: child.stdout
+  });
+
+  let exifData = "";
+  rl.on('line', (data) => {
+    exifData += data;
+  });
+
+  child.on('close', (code) => {
+    let exifObj = {};
+    try {
+      exifObj = JSON.parse(exifData)[0];
+    } catch(ex) { console.log("Error parsing data: ", exifData); }
+
+    cb(exifObj);
+  });
+}
+
 app.get('/exif', (req, res) => {
   var file = req.query.file;
-  if (file.match(/.*.(mp4|mov)/i)) {
-    fs.readFile("/home/pi/" + file, function (err, data) {
-      if (err) {
-        console.log('Error: ', err);
-        res.end("" + 1);
-      }
-
-      try {
-        exiftool.metadata(data, function (err, metadata) {
-          if (err) {
-            console.log('Error in movie: ',err);
-            console.log("Has exif tool been installed?: sudo apt-get install exiftool");
-            res.end("" + 1);
-            return;
-          }
-          let dateObj = metadata.mediaCreateDate;
-          if (dateObj && dateObj != "") { dateObj = dateObj.split(/ /); };
-          res.end(JSON.stringify({orientation: 1, date: dateObj}));
-        });
-      } catch(ex) {
-        console.log("Exception in exif: ", ex);
-      }
-    });
-  } else {
-    new ExifImage({ image : "/home/pi/" + file }, function (error, exifData) {
-      if (error) {
-        console.log('Error: '+error.message);
-        res.end("" + 1);
-      } else {
-        console.log(exifData.image.Orientation); // Do something with your data!
-        let dateObj = exifData.exif.DateTimeOriginal;
-        if (dateObj && dateObj != "") { dateObj = dateObj.split(/ /); };
-        res.end(JSON.stringify({orientation: exifData.image.Orientation, date: dateObj}));
-      }
-    });
-  }
+  getExif(file, (metadata) => {
+    console.log("Meta data: ", metadata);
+    let dateObj = metadata.MediaCreateDate;
+    if (!dateObj) {
+      dateObj = metadata.DateTimeOriginal;
+    }
+    if (dateObj && dateObj != "") { dateObj = dateObj.split(/ /); };
+    res.end(JSON.stringify({orientation: (metadata.Orientation ? metadata.Orientation : 1), date: dateObj}));
+  });
 });
 
 app.get('/alive', (req, res) => {
@@ -189,3 +189,7 @@ app.listen(8080, function () {
 
 var http = require('http');
 http.createServer(app).listen(80);
+
+process.on('uncaughtException', (err) => {
+  console.log(`Caught exception: ${err}\n`);
+});
