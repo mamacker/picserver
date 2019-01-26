@@ -28,22 +28,6 @@
 
         $.get(imgExif, (o) => {
           o = JSON.parse(o);
-          console.log("Orientation: ", o);
-          var rotation = 0;
-          switch(o.orientation) {
-            case 8:
-              rotation = -90;
-              break;
-            case 3:
-              rotation = 180;
-              break;
-            case 6:
-              rotation = 90;
-              break;
-          }
-
-          console.log("Transforming: " + rotation);
-          //img.css({ WebkitTransform: 'rotate(' + rotation + 'deg)'});
           var dateStr = "";
           if (o.date) {
             dateStr = o.date[0].split(/:/);

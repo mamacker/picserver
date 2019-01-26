@@ -70,9 +70,9 @@
                         body.height() + ";max-width:" + body.width() + "'>");
           }
 
-          var dateStr = "";
-          var randomPad = Math.floor(Math.random() * 50);
-          var dateSlide = $("<div class='slide' " +
+          let dateStr = "";
+          let randomPad = Math.floor(Math.random() * 50);
+          let dateSlide = $("<div class='slide' " +
                   "' style='font-size:65px;font-weight:bold;padding-top:" +randomPad + "px;padding-left:20px;color:white;mix-blend-mode:difference;display:none;position:absolute;top:0px;z-index:10'></div>");
 
           $.get(imgExif, (o) => {
@@ -80,13 +80,13 @@
             console.log("Orientation: ", o);
             var rotation = 0;
             switch(o.orientation) {
-              case 8:
+              case "Rotate 90 CCW":
                 rotation = -90;
                 break;
               case 3:
                 rotation = 180;
                 break;
-              case 6:
+              case "Rotate 90 CW":
                 rotation = 90;
                 break;
             }
@@ -95,7 +95,21 @@
             img.css({ WebkitTransform: 'rotate(' + rotation + 'deg)'});
             if (o.date) {
               dateStr = o.date[0].split(/:/);
-              dateSlide.text(`${dateStr[1]}/${dateStr[2]}/${dateStr[0]}`);
+              if (dateStr && dateStr != "") {
+                dateSlide.text(`${dateStr[1]}/${dateStr[2]}/${dateStr[0]}`);
+                console.log("Date string found: ", dateStr);
+                $(document.body).append(dateSlide.fadeIn({
+                  duration: 3000,
+                  easing: "linear",
+                  queue: false
+                }).animate({
+                  left: body.width(),
+                }, {
+                  duration: 20000,
+                  easing: "linear",
+                  queue:false
+                }));
+              }
             }
             /*
             img.css({
@@ -128,20 +142,6 @@
               queue:false
             }));
 
-            if (dateStr && dateStr != "") {
-              console.log("Date string found: ", dateStr);
-              $(document.body).append(dateSlide.fadeIn({
-                duration: 3000,
-                easing: "linear",
-                queue: false
-              }).animate({
-                left: body.width(),
-              }, {
-                duration: 20000,
-                easing: "linear",
-                queue:false
-              }));
-            }
           });
         });
       }
