@@ -73,6 +73,7 @@ setTimeout(() => {
 var app = express()
 
 app.use('/images', express.static('/home/pi'));
+app.use('/static', express.static('/home/pi/server/static'));
 
 setInterval(() => {
   if (!paused) {
@@ -193,7 +194,7 @@ function uniq(a) {
 
 app.get('/recent', (req, res) => {
   console.log(latestRenders);
-  res.write(JSON.stringify(uniq(latestRenders).slice(0, 100)));
+  res.write(JSON.stringify(uniq(latestRenders).slice(0, 20)));
   res.end();
 });
 
