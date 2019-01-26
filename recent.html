@@ -16,17 +16,19 @@
         let imgUrl = res[i];
         let imgExif = serverAddress + "/exif?file=" + res[i];
         let img;
+        let wrapper = $("<div style='max-height:400px;overflow:hidden;clear:left;float:left'/>");
         if (res[i].match(/.*\.(mp4|mov)/i)) {
-          img = $("<video muted controls autoplay loop height='400px' style='clear:left;float:left'>").attr("src", serverAddress + "/images/" + imgUrl);
+          img = $("<video muted controls autoplay loop height='400px' style=''>").attr("src", serverAddress + "/images/" + imgUrl);
         } else {
-          img = $("<img height='400px' style='clear:left;float:left'>").attr("src", serverAddress + "/images/" + imgUrl);
+          img = $("<img style='max-height:400px;'>").attr("src", serverAddress + "/images/" + imgUrl);
         }
         let dateSlide = $("<div " +
                 " style='height:400px;font-size:15px;font-weight:bold;padding-left:20px;color:white;mix-blend-mode:difference;float:left;padding-bottom:20px'></div>");
         let saveSlide = $("<button style='margin:30px'>Save For Later</button>");
         let rotateSlide = $("<button>Rotate</button>");
 
-        $(document.body).append(img);
+        $(document.body).append(wrapper);
+        $(wrapper).append(img);
         $(document.body).append(dateSlide);
         $(dateSlide).append(saveSlide);
         $(dateSlide).append(rotateSlide);
@@ -61,6 +63,21 @@
               dateStr = o.date[0].split(/:/);
               dateSlide.append(`<div>${dateStr[1]}/${dateStr[2]}/${dateStr[0]}</div>`);
             }
+            var rotation = 0;
+            switch(o.orientation) {
+              case "Rotate 270 CW":
+                rotation = 270;
+                break;
+              case 3:
+                rotation = 180;
+                break;
+              case "Rotate 90 CW":
+                rotation = 90;
+                break;
+            }
+
+            console.log("Transforming: " + rotation);
+            img.css({ WebkitTransform: 'rotate(' + rotation + 'deg)'});
             console.log(img.attr("style"));
           });
         });

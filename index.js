@@ -193,7 +193,7 @@ function uniq(a) {
 
 app.get('/recent', (req, res) => {
   console.log(latestRenders);
-  res.write(JSON.stringify(uniq(latestRenders).slice(0, 20)));
+  res.write(JSON.stringify(uniq(latestRenders).slice(0, 100)));
   res.end();
 });
 
