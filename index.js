@@ -110,17 +110,21 @@ app.get('/exif', (req, res) => {
         res.end("" + 1);
       }
 
-      exiftool.metadata(data, function (err, metadata) {
-        if (err) {
-          console.log('Error in movie: ',err);
-	  console.log("Has exif tool been installed?: sudo apt-get install exiftool");
-          res.end("" + 1);
-          return;
-        }
-        let dateObj = metadata.mediaCreateDate;
-        if (dateObj && dateObj != "") { dateObj = dateObj.split(/ /); };
-        res.end(JSON.stringify({orientation: 1, date: dateObj}));
-      });
+      try {
+        exiftool.metadata(data, function (err, metadata) {
+          if (err) {
+            console.log('Error in movie: ',err);
+            console.log("Has exif tool been installed?: sudo apt-get install exiftool");
+            res.end("" + 1);
+            return;
+          }
+          let dateObj = metadata.mediaCreateDate;
+          if (dateObj && dateObj != "") { dateObj = dateObj.split(/ /); };
+          res.end(JSON.stringify({orientation: 1, date: dateObj}));
+        });
+      } catch(ex) {
+        console.log("Exception in exif: ", ex);
+      }
     });
   } else {
     new ExifImage({ image : "/home/pi/" + file }, function (error, exifData) {

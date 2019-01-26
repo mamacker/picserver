@@ -16,7 +16,7 @@
         let imgExif = serverAddress + "/exif?file=" + res[i];
         let img;
         if (res[i].match(/.*\.(mp4|mov)/i)) {
-          img = $("<video autoplay loop height='400px' style='clear:left;float:left'>").attr("src", "http://192.168.1.33:8080/images/" + imgUrl);
+          img = $("<video muted controls autoplay loop height='400px' style='clear:left;float:left'>").attr("src", "http://192.168.1.33:8080/images/" + imgUrl);
         } else {
           img = $("<img height='400px' style='clear:left;float:left'>").attr("src", "http://192.168.1.33:8080/images/" + imgUrl);
         }
