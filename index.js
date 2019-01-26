@@ -155,6 +155,9 @@ app.get('/shell', function (req, res) {
 app.get('/r', function (req, res) {
   res.sendFile('/home/pi/server/recent.html');
 })
+app.get('/s', function (req, res) {
+  res.sendFile('/home/pi/server/saved.html');
+})
 
 function uniq(a) {
   return Array.from(new Set(a));

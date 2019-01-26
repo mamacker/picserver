@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  </head>
+  <body style="background-color:black;margin:0px;height:100%;width:100%">
+  <!--<a id="smspic" href="intent://sms/#Intent;scheme=sms;package=vnd.android-dir/mms-sms;S.browser_fallback_url=http%3A%2F%2F192.168.1.33:8080/shell.html;end">Try SMS start.</a>-->
+  <!--<a id="smspicto" href="smsto:?body=hi mom">try smsto link.</a>-->
+  <br>
+  <script>
+    const serverAddress = "http://"+document.location.host;
+    let res = JSON.parse(localStorage.saves);
+    console.log(res);
+    for (var i = 0; i < res.length; i++) {
+      if (res[i] == null) continue;
+      let imgUrl = res[i];
+      let imgExif = serverAddress + "/exif?file=" + res[i];
+      let img;
+      if (res[i].match(/.*\.(mp4|mov)/i)) {
+        img = $("<video muted controls autoplay loop height='400px' style='clear:left;float:left'>").attr("src", serverAddress + "/images/" + imgUrl);
+      } else {
+        img = $("<img height='400px' style='clear:left;float:left'>").attr("src", serverAddress + "/images/" + imgUrl);
+      }
+      let dateSlide = $("<div " +
+              " style='height:400px;font-size:15px;font-weight:bold;padding-left:20px;color:white;mix-blend-mode:difference;float:left'></div>");
+      let saveSlide = $("<button>Save For Later</button>");
+
+      $(document.body).append(img);
+      $(document.body).append(dateSlide);
+
+      setTimeout(() =>{
+        $.get(imgExif, (o) => {
+          o = JSON.parse(o);
+          var dateStr = "";
+          if (o.date) {
+            dateStr = o.date[0].split(/:/);
+            dateSlide.append(`<div>${dateStr[1]}/${dateStr[2]}/${dateStr[0]}</div>`);
+          }
+          console.log(img.attr("style"));
+        });
+      });
+    }
+  </script>
+  </body>
+</html>
