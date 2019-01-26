@@ -9,7 +9,7 @@
   <script>
     const serverAddress = "http://192.168.1.33:8080";
     $.get("/recent", (data) => {
-      var res = JSON.parse(data);
+      let res = JSON.parse(data);
       console.log(res);
       for (var i = 0; i < res.length; i++) {
         let imgUrl = res[i];
@@ -26,14 +26,16 @@
         $(document.body).append(img);
         $(document.body).append(dateSlide);
 
-        $.get(imgExif, (o) => {
-          o = JSON.parse(o);
-          var dateStr = "";
-          if (o.date) {
-            dateStr = o.date[0].split(/:/);
-            dateSlide.text(`${dateStr[1]}/${dateStr[2]}/${dateStr[0]}`);
-          }
-          console.log(img.attr("style"));
+        setTimeout(() =>{
+          $.get(imgExif, (o) => {
+            o = JSON.parse(o);
+            var dateStr = "";
+            if (o.date) {
+              dateStr = o.date[0].split(/:/);
+              dateSlide.text(`${dateStr[1]}/${dateStr[2]}/${dateStr[0]}`);
+            }
+            console.log(img.attr("style"));
+          });
         });
       }
     });

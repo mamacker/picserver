@@ -131,7 +131,6 @@ function getExif(file, cb) {
 app.get('/exif', (req, res) => {
   var file = req.query.file;
   getExif(file, (metadata) => {
-    console.log("Meta data: ", metadata);
     let dateObj = metadata.MediaCreateDate;
     if (!dateObj) {
       dateObj = metadata.DateTimeOriginal;
