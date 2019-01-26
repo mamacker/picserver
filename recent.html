@@ -22,12 +22,14 @@
           img = $("<img height='400px' style='clear:left;float:left'>").attr("src", serverAddress + "/images/" + imgUrl);
         }
         let dateSlide = $("<div " +
-                " style='height:400px;font-size:15px;font-weight:bold;padding-left:20px;color:white;mix-blend-mode:difference;float:left'></div>");
-        let saveSlide = $("<button>Save For Later</button>");
+                " style='height:400px;font-size:15px;font-weight:bold;padding-left:20px;color:white;mix-blend-mode:difference;float:left;padding-bottom:20px'></div>");
+        let saveSlide = $("<button style='margin:30px'>Save For Later</button>");
+        let rotateSlide = $("<button>Rotate</button>");
 
         $(document.body).append(img);
         $(document.body).append(dateSlide);
         $(dateSlide).append(saveSlide);
+        $(dateSlide).append(rotateSlide);
 
         saveSlide.on("click", () =>{
           if (!localStorage.saves) {
@@ -38,6 +40,17 @@
           savesArr.length = 1000;
           localStorage.saves = JSON.stringify(savesArr);
           $(saveSlide).remove();
+        });
+
+        rotateSlide.on("click", () => {
+          rotateSlide.text("working....");
+          let amount = img.rotated;
+          if (!amount) { amount = 0; }
+          amount += 90;
+          if (amount >= 360) amount = 0;
+          img.rotated = amount;
+          img.attr("src", serverAddress + "/rot/?file=" + imgUrl + "&deg=" + amount);
+          img.on("load", () => { rotateSlide.text("Rotate"); });
         });
 
         setTimeout(() =>{

@@ -2,6 +2,8 @@ var spawn = require('child_process').spawn;
 var readline = require('readline');
 var express = require('express');
 var fs = require('fs');
+var path = require('path')
+
 
 var lastLoad = new Date().getTime();
 var index = 0;
@@ -107,7 +109,6 @@ function getExif(file, cb) {
   ];
 
   let child = spawn('exiftool', args, {'shell':true});
-  console.log("exiftool" + args.join(" "))
 
   let rl = readline.createInterface({
     input: child.stdout
@@ -139,6 +140,33 @@ app.get('/exif', (req, res) => {
     res.end(JSON.stringify({orientation: (metadata.Orientation ? metadata.Orientation : 1), date: dateObj}));
   });
 });
+
+function getRot(file, deg, cb) {
+  let args = [
+    " ",
+    "-rotate",
+    deg,
+    "\"/home/pi/" + file + "\"",
+    "\"/home/pi/server/rotated/tmp"+ path.extname(file) + "\""
+  ];
+
+  let child = spawn('convert', args, {'shell':true});
+  console.log("convert" + args.join(" "))
+
+  child.on('close', (code) => {
+    cb(args[4].replace(/"/g,""));
+  });
+}
+
+app.get('/rot', (req, res) => {
+  var file = req.query.file;
+  var deg = req.query.deg;
+  getRot(file, deg, (newFile) => {
+    console.log("Sending along: ", newFile);
+    res.sendFile(newFile);
+  });
+});
+
 
 app.get('/alive', (req, res) => {
   res.end("" + ((new Date().getTime() - lastLoad) < 65000));

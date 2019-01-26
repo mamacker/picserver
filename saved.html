@@ -27,6 +27,18 @@
       $(document.body).append(img);
       $(document.body).append(dateSlide);
 
+        let rotateSlide = $("<button>Rotate</button>");
+        $(dateSlide).append(rotateSlide);
+        rotateSlide.on("click", () => {
+          rotateSlide.text("working....");
+          let amount = img.rotated;
+          if (!amount) { amount = 0; }
+          amount += 90;
+          if (amount >= 360) amount = 0;
+          img.rotated = amount;
+          img.attr("src", serverAddress + "/rot/?file=" + imgUrl + "&deg=" + amount);
+          img.on("load", () => { rotateSlide.text("Rotate"); });
+        });
       setTimeout(() =>{
         $.get(imgExif, (o) => {
           o = JSON.parse(o);
