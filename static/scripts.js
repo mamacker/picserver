@@ -5,7 +5,7 @@ let res = [];
 $.get("/recent", (data) => {
   let res = JSON.parse(data);
   if (isSaves) {
-    res = JSON.parse(localStorage.saves).slice(0,20);
+    res = JSON.parse(localStorage.saves).slice(0,40);
   }
 
   for (var i = 0; i < res.length; i++) {
