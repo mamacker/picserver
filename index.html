@@ -13,7 +13,7 @@
     <div id="dadstatus">
     </div>
     <script>
-      const serverAddress = "http://"+document.location.host;
+      const serverAddress = "//"+document.location.host;
 
       $("#dadstatus").css({
         position:"absolute",
@@ -49,7 +49,11 @@
         else if (month == 10 && date > 4) {
           offset = -8;
         }
+
         let d = new Date( new Date().getTime() + offset * 3600 * 1000);
+        if ((document.location.href + "").match(/.*usebrowsertime*/)) {
+          d = new Date();
+        }
         return d;
       }
 
