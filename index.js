@@ -4,7 +4,6 @@ var express = require('express');
 var fs = require('fs');
 var path = require('path')
 
-
 var lastLoad = new Date().getTime();
 var index = 0;
 var paused = false;
@@ -187,6 +186,43 @@ app.get('/r', function (req, res) {
 app.get('/s', function (req, res) {
   res.sendFile('/home/pi/server/saved.html');
 })
+
+let curUrl = "";
+let rotateTimer = null;
+app.get('/seturl', function (req, res) {
+  curUrl = req.query.url;
+  clearTimeout(rotateTimer);
+  res.end("set.");
+})
+
+app.get('/currenturl', function (req, res) {
+  res.end(curUrl);
+})
+
+app.get('/rotateurl', function (req, res) {
+  res.end("rotating");
+  let urlList = [
+    ["https://www.youtube.com/embed/Q6Iqev-E150?list=tLppquNnqg8Yg2FLtBGI1pynHd_kTBfP9N&autoplay=1&loop=1&index=1", 10 * (60 * 1000)],
+    ["https://www.youtube.com/embed/DXUAyRRkI6k?list=tLppquNnqg8Yg2FLtBGI1pynHd_kTBfP9N&autoplay=1&loop=1&index=1", 4 * (60 * 1000)],
+    ["https://www.youtube.com/embed/XXZFco-1zpo?list=tLppquNnqg8Yg2FLtBGI1pynHd_kTBfP9N&autoplay=1&loop=1&index=1", 5 * (60 * 1000)],
+    ["https://www.youtube.com/embed/63QyMlUzMA0?list=tLppquNnqg8Yg2FLtBGI1pynHd_kTBfP9N&autoplay=1&loop=1&index=1", 10 * (60 * 1000)],
+    ["https://www.youtube.com/embed/BnrSY8GpMjU?list=tLppquNnqg8Yg2FLtBGI1pynHd_kTBfP9N&autoplay=1&loop=1&index=1", 10 * (60 * 1000)],
+    ["https://www.youtube.com/embed/BnrSY8GpMjU?list=tLppquNnqg8Yg2FLtBGI1pynHd_kTBfP9N&autoplay=1&loop=1&index=1", 10 * (60 * 1000)],
+  ];
+
+  let playlistIndex = -1;
+  clearTimeout(rotateTimer);
+
+  let playIt = () => {
+    playlistIndex++;
+    if (playlistIndex >= urlList.length) {
+      playlistIndex = 0;
+    }
+    rotateTimer = setTimeout(playIt, urlList[playlistIndex][1]);
+    curUrl = urlList[playlistIndex][0];
+  }
+  playIt();
+});
 
 function uniq(a) {
   return Array.from(new Set(a));
