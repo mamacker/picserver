@@ -20,9 +20,18 @@ $.get("/recent", (data) => {
       img = $("<img style='max-height:400px;'>").attr("src", serverAddress + "/images/" + imgUrl);
     }
     let dateSlide = $("<div " +
-            " style='height:400px;font-size:15px;font-weight:bold;padding-left:20px;color:white;mix-blend-mode:difference;float:left'></div>");
+            " style='height:400px;font-size:15px;font-weight:bold;padding-left:20px;color:white;float:left'></div>");
     let saveSlide = $("<button>Save For Later</button>");
+    saveSlide.css({
+      color: "black",
+      backgroundColor: "white",
+      marginRight: 10
+    });
     let rotateSlide = $("<button>Rotate</button>");
+    rotateSlide.css({
+      color: "black",
+      backgroundColor: "white"
+    });
 
     $(document.body).append(wrapper);
     $(wrapper).append(img);

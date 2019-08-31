@@ -1,5 +1,6 @@
 var spawn = require('child_process').spawn;
 var readline = require('readline');
+const FauxMo = require('fauxmojs');
 var express = require('express');
 var fs = require('fs');
 var path = require('path')
@@ -10,6 +11,23 @@ var paused = false;
 var fileListing = [];
 var latestRenders = [];
 var indexes = [];
+
+let water = "off";
+setTimeout(() => {
+  console.log("Starting outlet for water hearer.");
+  let fauxMo = new FauxMo({
+    ipAddress: "192.168.1.115",
+    devices: [{
+        name: 'water_heater',
+        port: 11000,
+        handler: (action) => {
+          console.log('Water heater action:', action);
+          water = (action == "on" ? "on" : "off")
+        }
+      }
+    ]
+  });
+}, 10000);
 
 function randomIntFromInterval(min,max) {
   return Math.floor(Math.random()*(max-min+1)+min);
@@ -185,6 +203,28 @@ app.get('/r', function (req, res) {
 })
 app.get('/s', function (req, res) {
   res.sendFile('/home/pi/server/saved.html');
+})
+
+app.get('/water', (req, res) => {
+  if (req.query.set) {
+    water = "on";
+  } else if (req.query.clear) {
+    water = "off";
+  }
+  res.end(water);
+})
+
+let isOccupied = false;
+app.get('/occupied', (req, res) => {
+  if (req.query.set !== undefined) {
+    if (req.query.set === "1") {
+      isOccupied = "on";
+    } else if (req.query.set === "0") {
+      isOccupied = "off";
+    }
+  }
+  console.log("Area is occupied?", isOccupied);
+  res.end(isOccupied);
 })
 
 let curUrl = "";
