@@ -13,10 +13,11 @@ var latestRenders = [];
 var indexes = [];
 
 let water = "off";
+let dogdoor = "open";
 setTimeout(() => {
-  console.log("Starting outlet for water hearer.");
+  console.log("Starting outlet for water heater and dogdoor.");
   let fauxMo = new FauxMo({
-    ipAddress: "192.168.1.115",
+    ipAddress: "192.168.1.33",
     devices: [{
         name: 'water_heater',
         port: 11000,
@@ -24,13 +25,30 @@ setTimeout(() => {
           console.log('Water heater action:', action);
           water = (action == "on" ? "on" : "off")
         }
+      },{
+        name: 'dog_door',
+        port: 11000,
+        handler: (action) => {
+          console.log('Dog door action:', action);
+          dogdoor = (action == "on" ? "open" : "closed")
+        }
+      },{
+        name: 'dog_door_toggle',
+        port: 11000,
+        handler: (action) => {
+          console.log('Dog door toggle action:', action);
+          if (action == "on") { 
+            dogdoor = "toggle";
+          }
+          setTimeout(() => { dogdoor = "open"}, 2000);
+        }
       }
     ]
   });
 }, 10000);
 
 function randomIntFromInterval(min,max) {
-  return Math.floor(Math.random()*(max-min+1)+min);
+  return Math.floor(Math.random(Math.random())*(max-min+1)+min);
 }
 
 var args = [
@@ -201,6 +219,9 @@ app.get('/shell', function (req, res) {
 app.get('/r', function (req, res) {
   res.sendFile('/home/pi/server/recent.html');
 })
+app.get('/o', function (req, res) {
+  res.sendFile('/home/pi/server/old.html');
+})
 app.get('/s', function (req, res) {
   res.sendFile('/home/pi/server/saved.html');
 })
@@ -212,6 +233,18 @@ app.get('/water', (req, res) => {
     water = "off";
   }
   res.end(water);
+})
+
+app.get('/dogdoor', (req, res) => {
+  if (req.query.set) {
+    dogdoor = "open";
+  } else if (req.query.clear) {
+    dogdoor = "closed";
+  } else if (req.query.toggle) {
+      dogdoor = "toggle";
+      setTimeout(() => { dogdoor = "open"}, 2000);
+  }
+  res.end(dogdoor);
 })
 
 let isOccupied = false;
@@ -271,6 +304,12 @@ function uniq(a) {
 app.get('/recent', (req, res) => {
   console.log(latestRenders);
   res.write(JSON.stringify(uniq(latestRenders).slice(0, 20)));
+  res.end();
+});
+
+app.get('/old', (req, res) => {
+  console.log(latestRenders);
+  res.write(JSON.stringify(uniq(latestRenders).slice(0, 140)));
   res.end();
 });
 

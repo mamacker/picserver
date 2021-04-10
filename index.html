@@ -50,6 +50,8 @@
           offset = -8;
         }
 
+        offset -= 1;
+
         let d = new Date( new Date().getTime() + offset * 3600 * 1000);
         if ((document.location.href + "").match(/.*usebrowsertime*/)) {
           d = new Date();
@@ -187,6 +189,15 @@
           mixBlendMode: "difference",
           zIndex: 1000
         }).text(((now.getHours()) % 12) + ":" + pad2(now.getMinutes()) + " " + (now.getMonth()+1) + "/" + now.getDate());
+      }, 1000);
+
+      setInterval(() => {
+        $.get(serverAddress + "/currenturl", (res) => {
+          console.log(res);
+          if (res.match("http")) {
+            document.location.href = res;
+          }
+        });
       }, 1000);
     </script>
   </body>
