@@ -1,6 +1,6 @@
 var spawn = require('child_process').spawn;
 var readline = require('readline');
-const FauxMo = require('fauxmojs');
+const FauxMo = require('node-fauxmo');
 var express = require('express');
 var fs = require('fs');
 var path = require('path')
@@ -14,6 +14,7 @@ var indexes = [];
 
 let water = "off";
 let dogdoor = "open";
+let wizards_fire = "off";
 setTimeout(() => {
   console.log("Starting outlet for water heater and dogdoor.");
   let fauxMo = new FauxMo({
@@ -23,24 +24,31 @@ setTimeout(() => {
         port: 11000,
         handler: (action) => {
           console.log('Water heater action:', action);
-          water = (action == "on" ? "on" : "off")
+          water = (action == 1 ? "on" : "off")
         }
       },{
         name: 'dog_door',
-        port: 11000,
+        port: 11001,
         handler: (action) => {
           console.log('Dog door action:', action);
-          dogdoor = (action == "on" ? "open" : "closed")
+          dogdoor = (action == 1 ? "open" : "closed")
         }
       },{
         name: 'dog_door_toggle',
-        port: 11000,
+        port: 11002,
         handler: (action) => {
           console.log('Dog door toggle action:', action);
-          if (action == "on") { 
+          if (action == 1) { 
             dogdoor = "toggle";
+            setTimeout(() => { dogdoor = "open"}, 2000);
           }
-          setTimeout(() => { dogdoor = "open"}, 2000);
+        }
+      },{
+        name: 'wizards_fire',
+        port: 11003,
+        handler: (action) => {
+          console.log('Wizards fire:', action);
+          wizards_fire = (action == 1 ? "on" : "off")
         }
       }
     ]
@@ -236,15 +244,32 @@ app.get('/water', (req, res) => {
 })
 
 app.get('/dogdoor', (req, res) => {
-  if (req.query.set) {
+  if (req.query.open) {
     dogdoor = "open";
-  } else if (req.query.clear) {
+  } else if (req.query.close || req.query.closed) {
     dogdoor = "closed";
   } else if (req.query.toggle) {
       dogdoor = "toggle";
-      setTimeout(() => { dogdoor = "open"}, 2000);
+      setTimeout(() => { dogdoor = "open"}, 4000);
   }
   res.end(dogdoor);
+})
+
+app.get('/wizardsfire', (req, res) => {
+  if (req.query.on || req.query.set) {
+    wizards_fire = "on";
+  } else if (req.query.off || req.query.clear) {
+    wizards_fire = "off";
+  }
+  res.end(wizards_fire);
+})
+app.get('/wizards_fire', (req, res) => {
+  if (req.query.on || req.query.set) {
+    wizards_fire = "on";
+  } else if (req.query.off || req.query.clear) {
+    wizards_fire = "off";
+  }
+  res.end(wizards_fire);
 })
 
 let isOccupied = false;
