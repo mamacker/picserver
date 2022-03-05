@@ -14,6 +14,7 @@ var indexes = [];
 
 let water = "off";
 let dogdoor = "open";
+let sentry = "off";
 let wizards_fire = "off";
 setTimeout(() => {
   console.log("Starting outlet for water heater and dogdoor.");
@@ -42,6 +43,13 @@ setTimeout(() => {
             dogdoor = "toggle";
             setTimeout(() => { dogdoor = "open"}, 2000);
           }
+        }
+      },{
+        name: 'sentry',
+        port: 11004,
+        handler: (action) => {
+          console.log('Sentry turret action:', action);
+          sentry = (action == 1 ? "open" : "closed")
         }
       },{
         name: 'wizards_fire',
@@ -241,6 +249,15 @@ app.get('/water', (req, res) => {
     water = "off";
   }
   res.end(water);
+})
+
+app.get('/sentry', (req, res) => {
+  if (req.query.set) {
+    sentry = "on";
+  } else if (req.query.clear) {
+    sentry = "off";
+  }
+  res.end(sentry);
 })
 
 app.get('/dogdoor', (req, res) => {
